@@ -315,6 +315,8 @@ impl Contract {
     }
 
     /// Get activate companies paging
+    /// @param usize page
+    /// @param usize size
     /// @return companies
     pub fn get_companies_paging(&self, page: usize, size: usize) -> Vec<Company> {
         let mut companies = vec![];
@@ -350,7 +352,7 @@ impl Contract {
         feedback.report_vote = 0;
         feedback.create_at = env::block_timestamp().into();
         feedback.update_at = env::block_timestamp().into();
-        feedback.activate = false;
+        feedback.activate = true;
 
         // Create new feedback
         self.feedbacks.insert(&id, &feedback);
@@ -433,7 +435,7 @@ impl Contract {
         user.id = id;
         user.create_at = env::block_timestamp().into();
         user.update_at = env::block_timestamp().into();
-        user.activate = false;
+        user.activate = true;
 
         self.users.insert(&id, &user);
         self.next_user_id += 1;
