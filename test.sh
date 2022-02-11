@@ -1,22 +1,13 @@
 source neardev/dev-account.env
 
-# near call $CONTRACT_NAME set_white_lists '{"white_list": true}' --accountId $CONTRACT_NAME
+cat "==> Call fn get_feedbacks"
+near view $CONTRACT_NAME get_feedbacks '{"page": 0, "size": 10}' --accountId=$CONTRACT_NAME
 
-# near call $CONTRACT_NAME get_all_white_lists '{"from_index": 0, "limit": 10}' --accountId $CONTRACT_NAME
+cat "==> Call fn create_feedback"
+near call $CONTRACT_NAME create_feedback '{ "feedback": { "id": 0, "parent_id": 0, "user_id": 0, "company_id": 0, "content": "Mock feedback", "reaction": 4, "rating": 0, "up_vote": 0, "down_vote": 0, "report_vote": 0, "create_at": 0, "update_at": 0, "activate": true } }' --accountId=$CONTRACT_NAME
 
-near view $CONTRACT_NAME get_min_user_cap '{}' --accountId $CONTRACT_NAME
+cat "==> Call fn update_active_feedback"
+near call $CONTRACT_NAME update_active_feedback '{ "id": 1, "activate": true }' --accountId=$CONTRACT_NAME
 
-near call $CONTRACT_NAME set_min_user_cap '{"min_user_cap": 10000}' --accountId $CONTRACT_NAME
-
-near view $CONTRACT_NAME get_min_user_cap '{}' --accountId $CONTRACT_NAME
-
-near view $CONTRACT_NAME get_owner_id '{}' --accountId $CONTRACT_NAME
-
-near view $CONTRACT_NAME get_owner_id '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_min_user_cap '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_max_user_cap '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_total_allocation '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_current_allocation '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_open_time '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_close_time '{}' --accountId $CONTRACT_NAME
-near view $CONTRACT_NAME get_unlock_time '{}' --accountId $CONTRACT_NAME
+cat "==> Call fn get_feedbacks"
+near view $CONTRACT_NAME get_feedbacks '{"page": 0, "size": 10}' --accountId=$CONTRACT_NAME

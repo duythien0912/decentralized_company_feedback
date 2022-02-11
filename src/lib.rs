@@ -184,7 +184,7 @@ impl Contract {
         match self.feedbacks.get(&id).as_mut() {
             Some(feedback) => {
                 feedback.activate = activate;
-                feedback.update_at = env::block_timestamp();
+                feedback.update_at = env::block_timestamp().into();
                 self.feedbacks.insert(&id, feedback);
                 feedback.clone()
             }
@@ -201,7 +201,7 @@ impl Contract {
         match self.users.get(&id).as_mut() {
             Some(user) => {
                 user.activate = activate;
-                user.update_at = env::block_timestamp();
+                user.update_at = env::block_timestamp().into();
                 self.users.insert(&id, user);
                 user.clone()
             }
@@ -218,7 +218,7 @@ impl Contract {
         match self.companies.get(&id).as_mut() {
             Some(company) => {
                 company.activate = activate;
-                company.update_at = env::block_timestamp();
+                company.update_at = env::block_timestamp().into();
                 self.companies.insert(&id, company);
                 company.clone()
             }
@@ -230,10 +230,12 @@ impl Contract {
     /// @param usize page
     /// @param usize size
     /// @return feedbacks
-    pub fn get_feedbacks(&mut self, page: usize, size: usize) -> Vec<Feedback> {
+    pub fn get_feedbacks(&self, page: usize, size: usize) -> Vec<Feedback> {
         let mut feedbacks = vec![];
         for (_, feedback) in self.feedbacks.iter() {
-            feedbacks.push(feedback);
+            if feedback.activate {
+                feedbacks.push(feedback);
+            }
         }
         feedbacks.sort_by(|a, b| b.create_at.cmp(&a.create_at));
         feedbacks.into_iter().skip(page * size).take(size).collect()
@@ -346,8 +348,8 @@ impl Contract {
         feedback.up_vote = 0;
         feedback.down_vote = 0;
         feedback.report_vote = 0;
-        feedback.create_at = env::block_timestamp();
-        feedback.update_at = env::block_timestamp();
+        feedback.create_at = env::block_timestamp().into();
+        feedback.update_at = env::block_timestamp().into();
         feedback.activate = false;
 
         // Create new feedback
@@ -357,17 +359,19 @@ impl Contract {
         // Update parent feedback up_vote, down_vote, ban_vote by reaction
         match self.feedbacks.get(&feedback.parent_id).as_mut() {
             Some(parent_feedback) => {
-                if feedback.reaction == 0 {
-                    parent_feedback.up_vote += 1;
-                }
-                if feedback.reaction == 1 {
-                    parent_feedback.down_vote += 1;
-                }
-                if feedback.reaction == 2 {
-                    parent_feedback.report_vote += 1;
-                }
+                if parent_feedback.id != feedback.id {
+                    if feedback.reaction == 0 {
+                        parent_feedback.up_vote += 1;
+                    }
+                    if feedback.reaction == 1 {
+                        parent_feedback.down_vote += 1;
+                    }
+                    if feedback.reaction == 2 {
+                        parent_feedback.report_vote += 1;
+                    }
 
-                self.feedbacks.insert(&parent_feedback.id, &parent_feedback);
+                    self.feedbacks.insert(&parent_feedback.id, &parent_feedback);
+                }
             }
             None => {
                 env::log(format!("Didn't find feedback by parent_id.").as_bytes());
@@ -398,7 +402,7 @@ impl Contract {
 
         match self.feedbacks.get(&id).as_mut() {
             Some(feedback) => {
-                feedback.update_at = env::block_timestamp();
+                feedback.update_at = env::block_timestamp().into();
                 self.feedbacks.insert(&id, &feedback);
             }
             None => panic!("Feedback does not exist"),
@@ -426,8 +430,8 @@ impl Contract {
         let mut user = user;
 
         user.id = id;
-        user.create_at = env::block_timestamp();
-        user.update_at = env::block_timestamp();
+        user.create_at = env::block_timestamp().into();
+        user.update_at = env::block_timestamp().into();
         user.activate = false;
 
         self.users.insert(&id, &user);
@@ -446,7 +450,7 @@ impl Contract {
 
         let mut user = user;
 
-        user.update_at = env::block_timestamp();
+        user.update_at = env::block_timestamp().into();
 
         self.users.insert(&id, &user);
 
@@ -461,8 +465,8 @@ impl Contract {
         let mut company = company;
 
         company.id = id;
-        company.create_at = env::block_timestamp();
-        company.update_at = env::block_timestamp();
+        company.create_at = env::block_timestamp().into();
+        company.update_at = env::block_timestamp().into();
         company.activate = false;
 
         self.companies.insert(&id, &company);
@@ -481,7 +485,7 @@ impl Contract {
 
         let mut company = company;
 
-        company.update_at = env::block_timestamp();
+        company.update_at = env::block_timestamp().into();
 
         self.companies.insert(&id, &company);
 
