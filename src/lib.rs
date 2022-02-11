@@ -1,5 +1,5 @@
 /*!
-Private sale contract implementation with JSON serialization.
+Decentralized company feedback contract implementation with JSON serialization.
 NOTES:
   -
 */
