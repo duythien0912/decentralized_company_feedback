@@ -8,4 +8,4 @@ near call $CONTRACT_NAME new '{"owner_id": "'$CONTRACT_NAME'"}' --accountId=$CON
 
 rm -rf web/.env
 touch web/.env
-cp neardev/dev-account.env web/.env
+echo "REACT_APP_CONTRACT_NAME=$CONTRACT_NAME" > web/.env

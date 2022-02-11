@@ -245,10 +245,10 @@ impl Contract {
     /// @param FeedbackId id
     /// @return feedback
     pub fn get_feedback(&self, id: FeedbackId) -> Feedback {
-        let feedback = self.feedbacks.get(&id).unwrap();
-        assert!(feedback.id == id, "Feedback does not exist");
-
-        feedback
+        match self.feedbacks.get(&id) {
+            Some(feedback) => feedback,
+            None => panic!("Feedback does not exist"),
+        }
     }
 
     /// Get activate feedbacks by user_id paging
@@ -331,10 +331,10 @@ impl Contract {
     /// @param CompanyId id
     /// @return company
     pub fn get_company(&self, id: CompanyId) -> Company {
-        let company = self.companies.get(&id).unwrap();
-        assert!(company.id == id, "Company does not exist");
-
-        company
+        match self.companies.get(&id) {
+            Some(company) => company,
+            None => panic!("Company does not exist"),
+        }
     }
 
     /// Create new feedback
@@ -398,10 +398,11 @@ impl Contract {
     /// @param Feedback feedback
     /// @return feedback
     pub fn update_feedback(&mut self, id: FeedbackId, feedback: Feedback) -> Feedback {
-        // Update feedback
+        let mut feedback = feedback;
 
+        // Update feedback
         match self.feedbacks.get(&id).as_mut() {
-            Some(feedback) => {
+            Some(_) => {
                 feedback.update_at = env::block_timestamp().into();
                 self.feedbacks.insert(&id, &feedback);
             }
@@ -445,16 +446,15 @@ impl Contract {
     /// @param User user
     /// @return user
     pub fn update_user(&mut self, id: UserId, user: User) -> User {
-        let user_find_by_id = self.users.get(&id).unwrap();
-        assert!(user_find_by_id.id == id, "User does not exist");
-
-        let mut user = user;
-
-        user.update_at = env::block_timestamp().into();
-
-        self.users.insert(&id, &user);
-
-        user
+        match self.users.get(&id) {
+            Some(_) => {
+                let mut user = user;
+                user.update_at = env::block_timestamp().into();
+                self.users.insert(&id, &user);
+                user
+            }
+            None => panic!("User does not exist"),
+        }
     }
 
     /// Create new company
@@ -480,16 +480,15 @@ impl Contract {
     /// @param Company company
     /// @return company
     pub fn update_company(&mut self, id: CompanyId, company: Company) -> Company {
-        let company_find_by_id = self.companies.get(&id).unwrap();
-        assert!(company_find_by_id.id == id, "Company does not exist");
-
-        let mut company = company;
-
-        company.update_at = env::block_timestamp().into();
-
-        self.companies.insert(&id, &company);
-
-        company
+        match self.companies.get(&id) {
+            Some(_) => {
+                let mut company = company;
+                company.update_at = env::block_timestamp().into();
+                self.companies.insert(&id, &company);
+                company
+            }
+            None => panic!("Company does not exist"),
+        }
     }
 }
 
